@@ -16,6 +16,10 @@ deps:
 build: deps vet
 	go build -ldflags="-w -s $(LDFLAGS)" -o $(BINARY)
 
+.PHONY: test
+test:
+	go test -race ./... -v -check.v
+
 .PHONY: vet
 vet:
 	go vet ./...

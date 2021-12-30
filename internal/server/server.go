@@ -54,19 +54,19 @@ func (s *Server) initializeMiddleware() {
 func (s *Server) initializeRoutes() {
 	// Add health endpoints
 	healthSubrouter := s.mux.PathPrefix("/healthz").Subrouter()
-	healthSubrouter.HandleFunc("/liveness", s.handleLiveAndReadiness).Methods(http.MethodGet)
-	healthSubrouter.HandleFunc("/readiness", s.handleLiveAndReadiness).Methods(http.MethodGet)
+	healthSubrouter.HandleFunc("/liveness", s.handleLiveAndReadiness()).Methods(http.MethodGet)
+	healthSubrouter.HandleFunc("/readiness", s.handleLiveAndReadiness()).Methods(http.MethodGet)
 
 	// Main endpoints which handle Terraform's service discovery
 	s.mux.HandleFunc("/.well-known/terraform.json", s.handleWellKnown).Methods(http.MethodGet)
 
 	modSubrouter := s.mux.PathPrefix("/v1/modules/{namespace}/{name}/{system}").Subrouter()
-	modSubrouter.HandleFunc("/versions", s.handleModuleVersions).Methods(http.MethodGet)
-	modSubrouter.HandleFunc("/{version}/download", s.handleModuleDownload).Methods(http.MethodGet)
+	modSubrouter.HandleFunc("/versions", s.handleModuleVersions()).Methods(http.MethodGet)
+	modSubrouter.HandleFunc("/{version}/download", s.handleModuleDownload()).Methods(http.MethodGet)
 
 	provSubrouter := s.mux.PathPrefix("/v1/providers/{namespace}/{type}").Subrouter()
-	provSubrouter.HandleFunc("/versions", s.handleProviderVersions).Methods(http.MethodGet)
-	provSubrouter.HandleFunc("/download/{os}/{arch}", s.handleProviderDownload).Methods(http.MethodGet)
+	provSubrouter.HandleFunc("/versions", s.handleProviderVersions()).Methods(http.MethodGet)
+	provSubrouter.HandleFunc("/download/{os}/{arch}", s.handleProviderDownload()).Methods(http.MethodGet)
 }
 
 // ListenAndServe starts the application server
