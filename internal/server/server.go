@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -69,14 +70,14 @@ func (s *Server) initializeRoutes() {
 }
 
 // ListenAndServe starts the application server
-func (s *Server) ListenAndServe() (err error) {
+func (s *Server) ListenAndServe(address, port string) (err error) {
 	// Add middleware and routes to mux router
 	s.initializeMiddleware()
 	s.initializeRoutes()
 
 	// Create and run a new server
 	httpsrv := &http.Server{
-		Addr:         ":8080",
+		Addr:         fmt.Sprintf("%s:%s", address, port),
 		Handler:      s.mux,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,

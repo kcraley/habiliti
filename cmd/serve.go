@@ -38,7 +38,7 @@ func serveCmdFuncE(cmd *cobra.Command, args []string) error {
 		Port:              port,
 		TerraformRegistry: tfReg,
 	})
-	if err := app.ListenAndServe(); err != nil {
+	if err := app.ListenAndServe(address, port); err != nil {
 		log.Fatalf("an error occurred serving the application: %s", err)
 		return err
 	}
