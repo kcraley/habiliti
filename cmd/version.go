@@ -8,18 +8,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	versionCmd = &cobra.Command{
+// newVersionCommand returns a new command which prints the application version
+func newVersionCommand() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "prints the version and build information of the binary",
 		Long:  `prints the version and build information of the binary`,
 		Run:   versionCmdFunc,
 	}
-)
 
-func init() {
-	// Add `version` subcommand to `habiliti`
-	rootCmd.AddCommand(versionCmd)
+	return cmd
 }
 
 // versionCmd is the entrypoint for `hability version`

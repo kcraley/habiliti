@@ -14,7 +14,7 @@ const appName = "habiliti"
 
 var (
 	// Application configuration
-	config *configuration.Configuration
+	config *configuration.Configuration = configuration.New()
 
 	rootCmd = &cobra.Command{
 		Use:   appName,
@@ -24,14 +24,6 @@ var (
 The third-party Terraform module and provider registry.`,
 	}
 )
-
-func init() {
-	cobra.OnInitialize(initConfig)
-
-	config = configuration.New()
-
-	rootCmd.PersistentFlags().BoolVarP(&config.Verbose, "verbose", "v", false, "enables addition verbose output for troubleshooting")
-}
 
 func initConfig() {
 	// Marshal configuration from environment variables
@@ -50,6 +42,15 @@ func initConfig() {
 
 // Execute is the main entrypoint for the application
 func Execute() {
+	cobra.OnInitialize(initConfig)
+
+	// Configure all persistent flags
+	rootCmd.PersistentFlags().BoolVarP(&config.Verbose, "verbose", "v", false, "enables addition verbose output for troubleshooting")
+
+	// Add all subcommands to the root
+	rootCmd.AddCommand(newVersionCommand())
+	rootCmd.AddCommand(newServeCommand())
+
 	if err := rootCmd.Execute(); err != nil {
 		log.Println(err)
 		os.Exit(1)
