@@ -12,13 +12,6 @@ const (
 var (
 	buildDate  = ""
 	gitVersion = ""
-
-	Version = buildInformation{
-		BuildDate:  buildDate,
-		GitVersion: gitVersion,
-		GoOSArch:   fmt.Sprintf("%s %s", runtime.GOOS, runtime.GOARCH),
-		GoVersion:  runtime.Version(),
-	}
 )
 
 type buildInformation struct {
@@ -29,7 +22,7 @@ type buildInformation struct {
 }
 
 // String returns the build information as a string
-func (b *buildInformation) String() string {
+func (b *buildInformation) string() string {
 	return fmt.Sprintf(
 		stringFormat,
 		b.BuildDate,
@@ -37,4 +30,16 @@ func (b *buildInformation) String() string {
 		b.GoOSArch,
 		b.GoVersion,
 	)
+}
+
+// String returns the build information as a string
+func String() string {
+	version := buildInformation{
+		BuildDate:  buildDate,
+		GitVersion: gitVersion,
+		GoOSArch:   fmt.Sprintf("%s %s", runtime.GOOS, runtime.GOARCH),
+		GoVersion:  runtime.Version(),
+	}
+
+	return version.string()
 }

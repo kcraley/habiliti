@@ -24,5 +24,5 @@ func init() {
 
 // versionCmd is the entrypoint for `hability version`
 func versionCmdFunc(cmd *cobra.Command, args []string) {
-	fmt.Println(version.Version.String())
+	fmt.Println(version.String())
 }
