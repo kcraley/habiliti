@@ -8,11 +8,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// var (
-// 	address string
-// 	port    string
-// )
-
 // newServeCommand returns a new command which serves the application
 func newServeCommand() *cobra.Command {
 	cmd := &cobra.Command{
