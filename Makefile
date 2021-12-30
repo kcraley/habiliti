@@ -13,7 +13,7 @@ deps:
 	go get
 
 .PHONY: build
-build: deps
+build: deps vet
 	go build -ldflags="-w -s $(LDFLAGS)" -o $(BINARY)
 
 .PHONY: vet
