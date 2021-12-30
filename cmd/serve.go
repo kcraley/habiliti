@@ -8,10 +8,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	address string
-	port    string
-)
+// var (
+// 	address string
+// 	port    string
+// )
 
 // newServeCommand returns a new command which serves the application
 func newServeCommand() *cobra.Command {
@@ -22,23 +22,23 @@ func newServeCommand() *cobra.Command {
 		RunE:  serveCmdFuncE,
 	}
 
-	cmd.Flags().StringVarP(&address, "address", "a", "0.0.0.0", "the IP address that the application is being served")
-	cmd.Flags().StringVarP(&port, "port", "p", "7000", "the port that the application is being served on")
+	cmd.Flags().StringVarP(&config.Address, "address", "a", "0.0.0.0", "the IP address that the application is being served")
+	cmd.Flags().StringVarP(&config.Port, "port", "p", "7000", "the port that the application is being served on")
 
 	return cmd
 }
 
 func serveCmdFuncE(cmd *cobra.Command, args []string) error {
-	log.Infof("starting application server on %s:%s...", address, port)
+	log.Infof("starting application server on %s:%s...", config.Address, config.Port)
 
 	// Create and serve the application server
 	tfReg := terraform.NewRegistry(&terraform.RegistryOptions{})
 	app := server.New(&server.Options{
-		Address:           address,
-		Port:              port,
+		Address:           config.Address,
+		Port:              config.Port,
 		TerraformRegistry: tfReg,
 	})
-	if err := app.ListenAndServe(address, port); err != nil {
+	if err := app.ListenAndServe(config.Address, config.Port); err != nil {
 		log.Fatalf("an error occurred serving the application: %s", err)
 		return err
 	}
