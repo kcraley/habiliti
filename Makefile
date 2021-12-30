@@ -18,7 +18,7 @@ build: deps vet
 
 .PHONY: test
 test:
-	go test -race ./... -v -check.v
+	go test -race ./... -v
 
 .PHONY: vet
 vet:
