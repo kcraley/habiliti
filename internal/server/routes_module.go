@@ -1,6 +1,34 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
+)
+
+// type modulesResponse struct {
+// 	modules []moduleVersions `json:"modules"`
+// }
+
+// type moduleVersions struct {
+// 	source   string          `json:"source"`
+// 	versions []moduleVersion `json:"versions"`
+// }
+
+// type moduleVersion struct {
+// 	version    string
+// 	root       moduleRoot       `json:"root"`
+// 	submodules moduleSubmodules `json:"submodules"`
+// }
+
+// type moduleRoot struct {
+// 	providers    []terraform.Provider   `json:"providers"`
+// 	dependencies []terraform.Dependency `json:"dependencies"`
+// }
+
+// type moduleSubmodules struct {
+// 	path         string                   `json:"path"`
+// 	providers    []terraform.Provider     `json:"providers"`
+// 	dependencies []terraform.Dependencies `json:"dependencies"`
+// }
 
 func (s *Server) handleModuleVersions() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
