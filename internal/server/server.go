@@ -81,6 +81,7 @@ func (s *Server) ListenAndServe(address, port string) (err error) {
 		Handler:      s.mux,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  20 * time.Second,
 	}
 	if err := httpsrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("An error occurred: %s\n", err)
