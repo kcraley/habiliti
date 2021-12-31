@@ -58,7 +58,7 @@ func TestModuleVersionsRoute(t *testing.T) {
 			t.Logf("Module Versions Endpoint: %s", moduleVersionsEndpoint)
 
 			// Make request to test server
-			resp, err := testClient.Post(moduleVersionsEndpoint, "application/json", nil)
+			resp, err := testClient.Get(moduleVersionsEndpoint)
 			if err != nil {
 				t.Errorf("failed making a request to the test server: %s", err)
 			}
@@ -120,7 +120,7 @@ func TestModuleDownloadRoute(t *testing.T) {
 			t.Logf("Module Download Endpoint: %s", moduleDownloadEndpoint)
 
 			// Make request to test server
-			resp, err := testClient.Post(moduleDownloadEndpoint, "application/json", nil)
+			resp, err := testClient.Get(moduleDownloadEndpoint)
 			if err != nil {
 				t.Errorf("failed making a request to the test server: %s", err)
 			}
