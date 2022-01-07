@@ -59,11 +59,15 @@ func (s *Server) initializeRoutes() {
 	// REF: https://www.terraform.io/internals/remote-service-discovery
 	s.mux.HandleFunc("/.well-known/terraform.json", s.handleWellKnown()).Methods(http.MethodGet)
 
-	modSubrouter := s.mux.PathPrefix("/v1/modules/{namespace}/{name}/{system}").Subrouter()
+	// Build the root endpoint subrouter that is used for the rest of
+	// the Terraform regestry endpoints
+	rootSubrouter := s.mux.PathPrefix(fmt.Sprintf("%s/", s.opt.Endpoint)).Subrouter()
+
+	modSubrouter := rootSubrouter.PathPrefix("/modules/{namespace}/{name}/{system}").Subrouter()
 	modSubrouter.HandleFunc("/versions", s.handleModuleVersions()).Methods(http.MethodGet)
 	modSubrouter.HandleFunc("/{version}/download", s.handleModuleDownload()).Methods(http.MethodGet)
 
-	provSubrouter := s.mux.PathPrefix("/v1/providers/{namespace}/{type}").Subrouter()
+	provSubrouter := rootSubrouter.PathPrefix("/providers/{namespace}/{type}").Subrouter()
 	provSubrouter.HandleFunc("/versions", s.handleProviderVersions()).Methods(http.MethodGet)
 	provSubrouter.HandleFunc("/download/{os}/{arch}", s.handleProviderDownload()).Methods(http.MethodGet)
 }
