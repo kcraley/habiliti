@@ -34,8 +34,6 @@ type Server struct {
 
 // New creates and returns a new instance of an application server
 func New(opt *Options) *Server {
-	opt.init()
-
 	return &Server{
 		baseServer: newBaseServer(opt),
 		ctx:        context.Background(),
@@ -58,7 +56,8 @@ func (s *Server) initializeRoutes() {
 	healthSubrouter.HandleFunc("/readiness", s.handleLiveAndReadiness()).Methods(http.MethodGet)
 
 	// Main endpoints which handle Terraform's service discovery
-	s.mux.HandleFunc("/.well-known/terraform.json", s.handleWellKnown).Methods(http.MethodGet)
+	// REF: https://www.terraform.io/internals/remote-service-discovery
+	s.mux.HandleFunc("/.well-known/terraform.json", s.handleWellKnown()).Methods(http.MethodGet)
 
 	modSubrouter := s.mux.PathPrefix("/v1/modules/{namespace}/{name}/{system}").Subrouter()
 	modSubrouter.HandleFunc("/versions", s.handleModuleVersions()).Methods(http.MethodGet)
