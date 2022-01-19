@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/kcraley/habiliti/internal/configuration"
+	"github.com/kcraley/habiliti/cmd/configuration"
 
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"

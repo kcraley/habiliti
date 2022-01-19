@@ -18,6 +18,10 @@ func newServeCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&config.Address, "address", "a", "0.0.0.0", "the IP address that the application is being served")
+	cmd.Flags().BoolVarP(&config.EnableLogin, "enable-login", "l", true, "controls enabling the login endpoint")
+	cmd.Flags().BoolVarP(&config.EnableModules, "enable-modules", "m", true, "controls enabling the modules endpoint")
+	cmd.Flags().BoolVarP(&config.EnableProviders, "enable-providers", "r", true, "controls enabling the providers endpoint")
+	cmd.Flags().StringVarP(&config.Endpoint, "endpoint", "e", "/v1", "the root endpoint to serve the Terraform registry")
 	cmd.Flags().StringVarP(&config.Port, "port", "p", "7000", "the port that the application is being served on")
 
 	return cmd
@@ -27,9 +31,14 @@ func serveCmdFuncE(cmd *cobra.Command, args []string) error {
 	log.Infof("starting application server on %s:%s...", config.Address, config.Port)
 
 	// Create and serve the application server
-	tfReg := terraform.NewRegistry(&terraform.RegistryOptions{})
+	tfReg := terraform.NewRegistry(&terraform.RegistryOptions{
+		EnableLogin:     config.EnableLogin,
+		EnableModules:   config.EnableModules,
+		EnableProviders: config.EnableProviders,
+	})
 	app := server.New(&server.Options{
 		Address:           config.Address,
+		Endpoint:          config.Endpoint,
 		Port:              config.Port,
 		TerraformRegistry: tfReg,
 	})

@@ -5,8 +5,8 @@ BUILDDATE=$(shell date "+%s")
 GITVERSION=$(shell git describe --tags --always)
 
 LDFLAGS=\
-	-X $(module)/internal/version.buildDate=$(BUILDDATE) \
-	-X $(module)/internal/version.gitVersion=$(GITVERSION)
+	-X $(MODULE)/internal/version.buildDate=$(BUILDDATE) \
+	-X $(MODULE)/internal/version.gitVersion=$(GITVERSION)
 
 .PHONY: deps
 deps:
@@ -15,6 +15,10 @@ deps:
 .PHONY: build
 build: deps vet
 	go build -ldflags="-w -s $(LDFLAGS)" -o $(BINARY)
+
+.PHONY: test
+test:
+	go test -race ./... -v
 
 .PHONY: vet
 vet:

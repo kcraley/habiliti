@@ -34,8 +34,6 @@ type Server struct {
 
 // New creates and returns a new instance of an application server
 func New(opt *Options) *Server {
-	opt.init()
-
 	return &Server{
 		baseServer: newBaseServer(opt),
 		ctx:        context.Background(),
@@ -54,19 +52,24 @@ func (s *Server) initializeMiddleware() {
 func (s *Server) initializeRoutes() {
 	// Add health endpoints
 	healthSubrouter := s.mux.PathPrefix("/healthz").Subrouter()
-	healthSubrouter.HandleFunc("/liveness", s.handleLiveAndReadiness).Methods(http.MethodGet)
-	healthSubrouter.HandleFunc("/readiness", s.handleLiveAndReadiness).Methods(http.MethodGet)
+	healthSubrouter.HandleFunc("/liveness", s.handleLiveAndReadiness()).Methods(http.MethodGet)
+	healthSubrouter.HandleFunc("/readiness", s.handleLiveAndReadiness()).Methods(http.MethodGet)
 
 	// Main endpoints which handle Terraform's service discovery
-	s.mux.HandleFunc("/.well-known/terraform.json", s.handleWellKnown).Methods(http.MethodGet)
+	// REF: https://www.terraform.io/internals/remote-service-discovery
+	s.mux.HandleFunc("/.well-known/terraform.json", s.handleWellKnown()).Methods(http.MethodGet)
 
-	modSubrouter := s.mux.PathPrefix("/v1/modules/{namespace}/{name}/{system}").Subrouter()
-	modSubrouter.HandleFunc("/versions", s.handleModuleVersions).Methods(http.MethodGet)
-	modSubrouter.HandleFunc("/{version}/download", s.handleModuleDownload).Methods(http.MethodGet)
+	// Build the root endpoint subrouter that is used for the rest of
+	// the Terraform regestry endpoints
+	rootSubrouter := s.mux.PathPrefix(fmt.Sprintf("%s/", s.opt.Endpoint)).Subrouter()
 
-	provSubrouter := s.mux.PathPrefix("/v1/providers/{namespace}/{type}").Subrouter()
-	provSubrouter.HandleFunc("/versions", s.handleProviderVersions).Methods(http.MethodGet)
-	provSubrouter.HandleFunc("/download/{os}/{arch}", s.handleProviderDownload).Methods(http.MethodGet)
+	modSubrouter := rootSubrouter.PathPrefix("/modules/{namespace}/{name}/{system}").Subrouter()
+	modSubrouter.HandleFunc("/versions", s.handleModuleVersions()).Methods(http.MethodGet)
+	modSubrouter.HandleFunc("/{version}/download", s.handleModuleDownload()).Methods(http.MethodGet)
+
+	provSubrouter := rootSubrouter.PathPrefix("/providers/{namespace}/{type}").Subrouter()
+	provSubrouter.HandleFunc("/versions", s.handleProviderVersions()).Methods(http.MethodGet)
+	provSubrouter.HandleFunc("/download/{os}/{arch}", s.handleProviderDownload()).Methods(http.MethodGet)
 }
 
 // ListenAndServe starts the application server
@@ -81,6 +84,7 @@ func (s *Server) ListenAndServe(address, port string) (err error) {
 		Handler:      s.mux,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  20 * time.Second,
 	}
 	if err := httpsrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("An error occurred: %s\n", err)
